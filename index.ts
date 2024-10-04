@@ -43,7 +43,7 @@ app.get('/dashboard/:user_id', async (req: Request, res: Response) => {
   }
 
   const URLs: UrlEntry[] = await Database.GetAllUrlsOfUserAsync(user_id);
-  
+
   const expiration_dates = URLs.map((url_entry) => {
     if (!url_entry.permanent) {
       const expiration_date = new Date(url_entry.created_at);
@@ -57,7 +57,7 @@ app.get('/dashboard/:user_id', async (req: Request, res: Response) => {
   });
 
   const formatted_urls = URLs.map((url_entry) => formatURL(url_entry.url));
-  
+
   res.render('dashboard', { user, URLs, expiration_dates, formatted_urls });
 });
 
@@ -151,7 +151,7 @@ app.post('/create', async (req: Request, res: Response) => {
     return;
   }
 
-  if (await Database.GetURLByAliasAsync(alias)) {
+  if ((await Database.GetURLEntryAsync(alias))?.url) {
     res.send({ error: 'Alias already in use', short_url: null });
     return;
   }
@@ -171,13 +171,11 @@ app.post('/create', async (req: Request, res: Response) => {
 app.get('/view/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const link = await Database.GetURLByAliasAsync(alias);
-  if (!link) {
+  const url_entry: UrlEntry = await Database.GetURLEntryAsync(alias);
+  if (!url_entry?.url) {
     res.send({ error: 'Invalid alias', short_url: null });
     return;
   }
-
-  const url_entry: UrlEntry = await Database.GetURLEntryAsync(alias);
 
   let expiration_date_string: string;
   if (!url_entry.permanent) {
@@ -199,11 +197,14 @@ app.get('/view/:alias', async (req: Request, res: Response) => {
 app.get('/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const link = await Database.GetURLByAliasAsync(alias);
-  if (!link) {
+  const link: UrlEntry = await Database.GetURLEntryAsync(alias);
+
+  // If the alias does not exist
+  if (!link?.url) {
     return res.redirect('/');
   }
 
+  // Check to see if the link is expired. If so, redirect to /view/alias so the user can see that it's expired.
   if (!link.permanent) {
     const expiration_date = new Date(link.created_at);
     expiration_date.setDate(expiration_date.getDate() + 7);
@@ -214,7 +215,7 @@ app.get('/:alias', async (req: Request, res: Response) => {
   }
 
   Database.IncrementVisitsAsync(alias);
-  res.redirect(link);
+  res.redirect(link.url);
 });
 
 /**
@@ -223,8 +224,8 @@ app.get('/:alias', async (req: Request, res: Response) => {
 app.delete('/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const link = await Database.GetURLByAliasAsync(alias);
-  if (!link) {
+  const link: UrlEntry = await Database.GetURLEntryAsync(alias);
+  if (!link?.url) {
     res.send({ error: 'Invalid alias', short_url: null });
     return;
   }
