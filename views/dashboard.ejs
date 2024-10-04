@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link href="icon.png" rel="icon" type="image/png" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+  <% URLs.forEach((url_entry, i) => { %>
+    <div class="url-entry-card">
+      <h2><%= url_entry.alias %></h2>
+      <div class="entry-details">
+        <div class="detail-row">
+          <strong class="no-highlight">URL</strong>
+          <a id="url" href=<%= url_entry.url %>><%= formatted_urls[i] %></a>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Visits</strong>
+          <span id="visits"><%= url_entry.visits %></span>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Expires</strong>
+          <span id="expires">
+            <%= expiration_dates[i] %>
+          </span>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Created</strong>
+          <span id="created-at"><%= new Date(url_entry.created_at).toLocaleString() %></span>
+        </div>
+
+        <div class="qr-code">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= url_entry.url %>" alt="QR Code" class="no-highlight">
+        </div>
+
+        <button class="delete-button" data-alias="<%= url_entry.alias %>"><i class="material-icons">&#xe872;</i></button>
+      </div>
+    </div>
+  <% }) %>
+
+  <script>
+    document.querySelectorAll('.delete-button').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const alias = btn.getAttribute('data-alias');
+        const response = await fetch(`/${alias}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          // window.location.reload();
+          btn.parentElement.parentElement.remove();
+        } else {
+          alert('Failed to delete URL');
+        }
+      });
+    });
+  </script>
+
+  <style>
+    .url-entry-card {
+      transition: transform 250ms ease-in-out;
+    }
+
+    .url-entry-card:hover {
+      transform: scale(1.05);
+    }
+
+    .url-entry-card {
+      position: relative;
+    }
+
+    .delete-button {
+      background-color: #ffeb3b;
+      border-radius: 2.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      transition: transform 250ms ease-in-out;
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+    }
+
+    .delete-button:hover {
+      cursor: pointer;
+      transform: scale(1.2);
+    }
+  </style>
+
+  <style>
+    body {
+      background-color: #404040;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+    }
+
+    a {
+      color: #e0e0e0;
+      text-decoration: none;
+    }
+
+    .url-entry-card {
+      background-color: #1e1e1eaa;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px; /* Set a fixed width for the card */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      color: #e0e0e0;
+      text-align: center;
+    }
+
+    .entry-details {
+      margin-top: 10px;
+      display: flex; /* Enable flexbox layout */
+      flex-direction: column; /* Stack items vertically */
+    }
+
+    .detail-row {
+      display: flex; /* Use flexbox for each row */
+      justify-content: space-between; /* Space between label and value */
+      margin: 8px 0; /* Space between entries */
+    }
+
+    strong, h2 {
+      color: #ffeb3b; /* Highlighting labels with a yellow color */
+    }
+
+    .qr-code {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .no-highlight {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* Internet Explorer/Edge */
+      user-select: none;         /* Standard */
+    }
+  </style>
+
+  <a href="/home" id="home-redirect">Home</a>
+  <style>
+    #home-redirect {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #ffffff;
+      padding: .75rem;
+      border-radius: .5rem;
+      transition: transform 250ms ease-in-out;
+      text-decoration: none;
+      font-size: .85rem;
+      color: black;
+      font-weight: 600;
+      font-family: Comfortaa;
+    }
+
+    #home-redirect:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+  </style>
+</body>
+</html>

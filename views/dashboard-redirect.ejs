@@ -1,0 +1,8 @@
+<script>
+  const user_id = window.localStorage.getItem('user_id');
+  if (user_id) {
+    window.location.href = `/dashboard/${user_id}`;
+  } else {
+    window.location.href = '/';
+  }
+</script>

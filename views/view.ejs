@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link href="icon.png" rel="icon" type="image/png" />
+</head>
+<body>
+  <div>
+    <div class="url-entry-card">
+      <h2><%= url_entry.alias %></h2>
+      <div class="entry-details">
+        <div class="detail-row">
+          <strong class="no-highlight">URL</strong>
+          <a id="url" href=<%= url_entry.url %>><%= url_entry.url %></a>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Visits</strong>
+          <span id="visits"><%= url_entry.visits %></span>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Expires</strong>
+          <span id="expires"><%= expiration_date %></span>
+        </div>
+        <div class="detail-row">
+          <strong class="no-highlight">Created</strong>
+          <span id="created-at"><%= new Date(url_entry.created_at).toLocaleString() %></span>
+        </div>
+
+        <div class="qr-code">
+          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= url_entry.url %>" alt="QR Code" class="no-highlight">
+        </div>
+      </div>
+    </div>
+
+    <div class="btns-div">
+      <button class="noselect delete-btn"><span class="text">Delete</span><span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path></svg></span></button>
+      <button class="Btn">
+        <div class="sign"><svg viewBox="0 0 512 512"><path d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"></path></svg></div>
+        <div class="text">Home</div>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const deleteBtn = document.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', async () => {
+      const alias = '<%= url_entry.alias %>';
+
+      const response = await fetch(`/${alias}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        window.location.href = '/';
+      } else {
+        alert('Failed to delete the URL entry');
+      }
+    });
+
+    const homeBtn = document.querySelector('.Btn');
+    homeBtn.addEventListener('click', () => {
+      window.location.href = '/';
+    });
+  </script>
+
+  <style>
+    .qr-code {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .no-highlight {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* Internet Explorer/Edge */
+      user-select: none;         /* Standard */
+    }
+
+    body {
+      background-color: #404040;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+    }
+
+    a {
+      color: #e0e0e0;
+      text-decoration: none;
+    }
+
+    .url-entry-card {
+      background-color: #1e1e1eaa;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 300px; /* Set a fixed width for the card */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    h2 {
+      color: #e0e0e0;
+      text-align: center;
+    }
+
+    .entry-details {
+      margin-top: 10px;
+      display: flex; /* Enable flexbox layout */
+      flex-direction: column; /* Stack items vertically */
+    }
+
+    .detail-row {
+      display: flex; /* Use flexbox for each row */
+      justify-content: space-between; /* Space between label and value */
+      margin: 8px 0; /* Space between entries */
+    }
+
+    strong, h2 {
+      color: #ffeb3b; /* Highlighting labels with a yellow color */
+    }
+  </style>
+
+  <style>
+    .btns-div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    /* From Uiverse.io by vinodjangid07 */ 
+    .Btn {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      width: 45px;
+      height: 45px;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition-duration: .3s;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
+      background-color: rgb(255, 65, 65);
+    }
+
+    /* plus sign */
+    .sign {
+      width: 100%;
+      transition-duration: .3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sign svg {
+      width: 17px;
+    }
+
+    .sign svg path {
+      fill: #e0e0e0;
+    }
+    /* text */
+    div.text {
+      position: absolute;
+      right: 0%;
+      width: 0%;
+      opacity: 0;
+      color: #e0e0e0;
+      font-size: 1.2em;
+      font-weight: 600;
+      transition-duration: .3s;
+    }
+    /* hover effect on button width */
+    .Btn:hover {
+      width: 150px;
+      border-radius: 40px;
+      transition-duration: .3s;
+    }
+
+    .Btn:hover .sign {
+      width: 30%;
+      transition-duration: .3s;
+      padding-left: 20px;
+    }
+    /* hover effect button's text */
+    .Btn:hover div.text {
+      opacity: 1;
+      width: 70%;
+      transition-duration: .3s;
+      padding-right: 10px;
+    }
+    /* button click effect*/
+    .Btn:active {
+      transform: translate(2px ,2px);
+    }
+  </style>
+
+  <style>
+    body {
+      font-family: Comfortaa;
+    }
+
+    /* From Uiverse.io by cssbuttons-io */ 
+    .delete-btn {
+      width: 150px;
+      height: 50px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      border: none;
+      border-radius: 2.5rem;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.15);
+      background: rgb(255, 65, 65);
+      font-family: Comfortaa;
+    }
+
+    .delete-btn, .delete-btn span {
+      transition: 200ms;
+    }
+
+    .delete-btn span.text {
+      transform: translateX(35px);
+      color: #e0e0e0;
+      font-weight: bold;
+    }
+
+    .delete-btn .icon {
+      position: absolute;
+      border-left: 1px solid #c41b1b;
+      transform: translateX(100px);
+      height: 40px;
+      width: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-btn svg {
+      width: 15px;
+      fill: #eee;
+    }
+
+    .delete-btn:hover {
+      background: #ff3636;
+    }
+
+    .delete-btn:hover span.text {
+      color: transparent;
+    }
+
+    .delete-btn:hover .icon {
+      width: 150px;
+      border-left: none;
+      transform: translateX(0);
+    }
+
+    .delete-btn:focus {
+      outline: none;
+    }
+
+    .delete-btn:active .icon svg {
+      transform: scale(0.8);
+    }
+  </style>
+
+  <a href="/dashboard" id="dashboard-redirect">Dashboard</a>
+  <style>
+    #dashboard-redirect {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #ffffff;
+      padding: .75rem;
+      border-radius: .5rem;
+      transition: transform 250ms ease-in-out;
+      text-decoration: none;
+      font-size: .85rem;
+      color: black;
+      font-weight: 600;
+      font-family: Comfortaa;
+    }
+
+    #dashboard-redirect:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+  </style>
+</body>
+</html>
