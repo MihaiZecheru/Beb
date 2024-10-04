@@ -137,29 +137,6 @@ export default class Database {
   }
 
   /**
-   * Get a URL by its alias
-   * 
-   * @param alias The alias of the short URL to get (serves as the ID)
-   * @returns The URL and created_at date that corresponds to the given alias, or null if the alias doesn't exist
-   */
-  public static async GetURLByAliasAsync(alias: string): Promise<{ url: string, created_at: Date } | null> {
-    return await new Promise((resolve, reject) => {
-      this.db.get('SELECT url, created_at FROM URLs WHERE alias = ?', [alias], (err, row) => {
-        if (err) {
-          console.error(err);
-          return reject(new Error("Database error during URL lookup"));
-        }
-
-        if (!row) return resolve(null);
-        resolve({
-          url: (row as any).url,
-          created_at: (row as any).created_at
-        });
-      });
-    });
-  }
-
-  /**
    * Increment the visit count for a short URL
    * 
    * @param alias The alias of the short URL, used to identify the entry in the db
