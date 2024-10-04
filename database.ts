@@ -38,19 +38,6 @@ export default class Database {
         throw new Error("Failed to create table");
       }
     });
-
-    this.db.run(`
-CREATE TRIGGER IF NOT EXISTS DELETE_EXPIRED_URLs
-AFTER INSERT ON URLs
-BEGIN
-  DELETE FROM URLs WHERE created_at < datetime('now', '-7 day') and permanent = 0;
-END;`, (err) => {
-      if (err) {
-        console.error(err);
-        console.log("NOTE: IF THIS IS THE FIRST TIME GETTING THIS ERROR, JUST REFRESH.");
-        throw new Error("Failed to create trigger - CHECK NOTE ABOVE");
-      }
-    });
   }
 
   /**
