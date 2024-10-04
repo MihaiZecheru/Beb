@@ -204,6 +204,15 @@ app.get('/:alias', async (req: Request, res: Response) => {
     return res.redirect('/');
   }
 
+  if (!link.permanent) {
+    const expiration_date = new Date(link.created_at);
+    expiration_date.setDate(expiration_date.getDate() + 7);
+    // If expired
+    if (new Date(new Date().toISOString()) > new Date(expiration_date.toISOString())) {
+      return res.redirect(`/view/${alias}`);
+    }
+  }
+
   Database.IncrementVisitsAsync(alias);
   res.redirect(link);
 });
