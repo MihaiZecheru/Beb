@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link href="icon.png" rel="icon" type="image/png" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <main>
+    <h1>Dashboard</h1>
+    <p>You have not created any shortened URLs yet.</p>
+  </main>
+  
+  <style>
+    body {
+      background-color: #404040;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+    }
+
+    a {
+      color: #e0e0e0;
+      text-decoration: none;
+    }
+
+    .no-highlight {
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* Internet Explorer/Edge */
+      user-select: none;         /* Standard */
+  }
+  </style>
+
+  <a href="/home" id="home-redirect">Home</a>
+  <style>
+    #home-redirect {
+      position: fixed;
+      bottom: 1rem;
+      right: 1rem;
+      background-color: #ffffff;
+      padding: .75rem;
+      border-radius: .5rem;
+      transition: transform 250ms ease-in-out;
+      text-decoration: none;
+      font-size: .85rem;
+      color: black;
+      font-weight: 600;
+      font-family: Comfortaa;
+    }
+
+    #home-redirect:hover {
+      cursor: pointer;
+      transform: scale(1.1);
+    }
+  </style>
+</body>
+</html>

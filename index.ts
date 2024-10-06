@@ -57,8 +57,12 @@ app.get('/dashboard/:user_id', async (req: Request, res: Response) => {
   });
 
   const formatted_urls = URLs.map((url_entry) => formatURL(url_entry.url));
-
-  res.render('dashboard', { user, URLs, expiration_dates, formatted_urls });
+  
+  if (URLs.length > 0) {
+    res.render('dashboard', { user, URLs, expiration_dates, formatted_urls });
+  } else {
+    res.render('empty-dashboard');
+  }
 });
 
 /**
@@ -171,7 +175,7 @@ app.post('/create', async (req: Request, res: Response) => {
 app.get('/view/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const url_entry: UrlEntry = await Database.GetURLEntryAsync(alias);
+  const url_entry: UrlEntry | null = await Database.GetURLEntryAsync(alias);
   if (!url_entry?.url) {
     res.send({ error: 'Invalid alias', short_url: null });
     return;
@@ -197,7 +201,7 @@ app.get('/view/:alias', async (req: Request, res: Response) => {
 app.get('/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const link: UrlEntry = await Database.GetURLEntryAsync(alias);
+  const link: UrlEntry | null = await Database.GetURLEntryAsync(alias);
 
   // If the alias does not exist
   if (!link?.url) {
@@ -224,7 +228,7 @@ app.get('/:alias', async (req: Request, res: Response) => {
 app.delete('/:alias', async (req: Request, res: Response) => {
   const alias = req.params.alias;
 
-  const link: UrlEntry = await Database.GetURLEntryAsync(alias);
+  const link: UrlEntry | null = await Database.GetURLEntryAsync(alias);
   if (!link?.url) {
     res.send({ error: 'Invalid alias', short_url: null });
     return;
