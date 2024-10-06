@@ -158,14 +158,17 @@ export default class Database {
    * Get a URL entry by its alias from the database
    * 
    * @param alias The alias of the short URL
+   * @returns The URL entry with the given alias, or null if it doesn't exist
    */
-  public static async GetURLEntryAsync(alias: string): Promise<UrlEntry> {
+  public static async GetURLEntryAsync(alias: string): Promise<UrlEntry | null> {
     return await new Promise((resolve, reject) => {
       this.db.get('SELECT * FROM URLs WHERE alias = ?', [alias], (err, row) => {
         if (err) {
           console.error(err);
           return reject(new Error("Database error during URL entry lookup"));
         }
+
+        if (!row) return resolve(null);
 
         (row as any).permanent = (row as any).permanent === 1;
         resolve((<UrlEntry>row));
