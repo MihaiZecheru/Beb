@@ -28,7 +28,7 @@
         </div>
 
         <div class="qr-code">
-          <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= url_entry.url %>" alt="QR Code" class="no-highlight">
+          <img src="data:image/png;base64,<%= url_entry.qr_code %>" alt="QR Code" class="no-highlight">
         </div>
       </div>
     </div>

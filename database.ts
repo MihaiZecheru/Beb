@@ -25,9 +25,10 @@ export default class Database {
 
     this.db.run(
 `CREATE TABLE IF NOT EXISTS URLs (
-    user_id NCHAR(36) NOT NULL,
-    url TEXT NOT NULL,
     alias VARCHAR(20) PRIMARY KEY,
+    url TEXT NOT NULL,
+    qr_code BLOB NOT NULL,
+    user_id NCHAR(36) NOT NULL,
     permanent BOOLEAN NOT NULL,
     visits INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -125,14 +126,20 @@ export default class Database {
    */
   public static async CreateShortLinkAsync(creator: string, url: string, alias: string, permanent: boolean): Promise<string> {
     return await new Promise((resolve, reject) => {
-      this.db.run('INSERT INTO URLs (user_id, url, alias, permanent, created_at) VALUES (?, ?, ?, ?, ?)', [creator, url, alias, permanent, new Date().toISOString()], (err) => {
-        if (err) {
-          console.error(err);
-          return reject(new Error("Database error during short link creation"));
-        }
+      fetch(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`).then((res) => res.arrayBuffer()).then((buffer) => {
+        const bytes = new Uint8Array(buffer);
+        return Buffer.from(bytes).toString('base64');
+      }).then((qr_code) => {
+        this.db.run('INSERT INTO URLs (alias, url, qr_code, user_id, permanent, visits, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [alias, url, qr_code, creator, permanent, 0, new Date().toISOString()], (err) => {
+          if (err) {
+            console.error(err);
+            return reject(new Error("Database error during short link creation"));
+          }
 
-        resolve(alias);
-      });
+          resolve(alias);
+        });
+      }).catch((err) => reject(err));
     });
   }
 
@@ -210,9 +217,10 @@ export default class Database {
 
         resolve(rows.map((row: any) => {
           return <UrlEntry> {
-            user_id: row.user_id,
-            url: row.url,
             alias: row.alias,
+            url: row.url,
+            qr_code: row.qr_code,
+            user_id: row.user_id,
             permanent: row.permanent === 1,
             visits: row.visits,
             created_at: new Date(row.created_at)
