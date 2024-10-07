@@ -11,7 +11,7 @@
     <div class="url-entry-card">
       <a class="url-text" href=<%= url_entry.url %>><h2><%= url_entry.alias %></h2></a>
       <div class="entry-details">
-        <div class="detail-row url-text">
+        <div class="detail-row url-text justify-right">
           <a id="url" class="url-text" href=<%= url_entry.url %> title=<%= url_entry.url %>><%= url_entry.url %></a>
         </div>
         <div class="detail-row">
@@ -68,11 +68,17 @@
   </script>
 
   <style>
+    .justify-right {
+      justify-content: flex-start!important;
+    }
+
     .url-text {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       user-select: text;
+      color: #ffeb3b;
+      font-family: Comfortaa;
     }
 
     .qr-code {
