@@ -11,11 +11,10 @@
 
   <% URLs.forEach((url_entry, i) => { %>
     <div class="url-entry-card">
-      <h2><%= url_entry.alias %></h2>
+      <a class="url-text" href=<%= url_entry.url %>><h2><%= url_entry.alias %></h2></a>
       <div class="entry-details">
-        <div class="detail-row">
-          <strong class="no-highlight">URL</strong>
-          <a id="url" href=<%= url_entry.url %>><%= formatted_urls[i] %></a>
+        <div class="detail-row url-text">
+          <a id="url" class="url-text" href=<%= url_entry.url %> title=<%= url_entry.url %>><%= url_entry.url %></a>
         </div>
         <div class="detail-row">
           <strong class="no-highlight">Visits</strong>
@@ -93,6 +92,13 @@
   </style>
 
   <style>
+    .url-text {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      user-select: text;
+    }
+
     body {
       background-color: #404040;
       color: #e0e0e0;
