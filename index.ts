@@ -192,7 +192,7 @@ app.get('/view/:alias', async (req: Request, res: Response) => {
     expiration_date_string = "Never";
   }
 
-  res.render('view', { url_entry, expiration_date: expiration_date_string });
+  res.render('view', { url_entry, expiration_date: expiration_date_string, formatted_url: formatURL(url_entry.url) });
 });
 
 /**
