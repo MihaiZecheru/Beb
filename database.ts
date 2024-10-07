@@ -1,4 +1,5 @@
 import sqlite3 from 'sqlite3';
+import fetch from "node-fetch";
 import { v4 as uuidv4 } from 'uuid';
 import { UrlEntry, User } from './types';
 
@@ -126,7 +127,8 @@ export default class Database {
    */
   public static async CreateShortLinkAsync(creator: string, url: string, alias: string, permanent: boolean): Promise<string> {
     return await new Promise((resolve, reject) => {
-      fetch(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`).then((res) => res.arrayBuffer()).then((buffer) => {
+      fetch(`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(url)}`)
+        .then((res) => res.arrayBuffer()).then((buffer) => {
         const bytes = new Uint8Array(buffer);
         return Buffer.from(bytes).toString('base64');
       }).then((qr_code) => {
