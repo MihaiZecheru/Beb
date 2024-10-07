@@ -178,8 +178,9 @@
       if (!alias || alias.length > 20) return;
       if (["create", "view", "api", "dashboard", "login"].includes(alias))
         return alert("This alias is reserved");
-      
+
       HideModal();
+
       fetch('/create', {
         method: 'POST',
         headers: {
@@ -195,10 +196,15 @@
         if (res.ok)
           return res.json();
         else
-          alert('Failed to create short URL');
+          alert('Network error - failed to create short URL');
       }).then((res) => {
         if (res.error === 'Alias already in use') {
           alert("The alias you've chosen is currently taken by another URL");
+          return;
+        }
+
+        if (res.error) {
+          alert(res.error);
           return;
         }
 
