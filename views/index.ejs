@@ -88,11 +88,11 @@
   </style>
 
   <script>
-    function GetUserID() {
+    function GetUserID(url, alias) {
       let id = localStorage.getItem('user_id');
 
       if (!id) {
-        window.location.href = '/login?url=' + login;
+        window.location.href = `/login?url=${url}&alias=${alias}`;
         throw new Error('User not logged in');
       }
 
@@ -123,8 +123,9 @@
       }, 500); // Match the duration of the fade-out transition
     }
 
-    function ShowModal() {
-      aliasInput.value = "";
+    function ShowModal(clear) {
+      if (clear)
+        aliasInput.value = "";
       modal.style.display = "flex";
       aliasInput.focus();
       setTimeout(() => {
@@ -153,7 +154,7 @@
       }
 
       window._url = url;
-      ShowModal();
+      ShowModal(true);
     }
 
     input.addEventListener('keypress', (e) => {
@@ -165,6 +166,18 @@
     shortenBtn.addEventListener('click', () => {
       HandleURLInputEnter(input.value);
     });
+  </script>
+
+  <script>
+    const search_params = new URLSearchParams(window.location.search);
+    const url_param = search_params.get('url');
+    const alias_param = search_params.get('alias');
+    if (url_param && alias_param) {
+      input.value = url_param;
+      window._url = url_param;
+      aliasInput.value = alias_param;
+      ShowModal(false);
+    }
   </script>
 
   <script>
@@ -190,7 +203,7 @@
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          creator: GetUserID(),
+          creator: GetUserID(window._url, alias),
           url: window._url,
           alias: alias,
           permanent: window._permanent_url || false
@@ -311,7 +324,7 @@
   </style>
 
   <style>
-    /* From Uiverse.io by vinodjangid07 */ 
+    /* From Uiverse.io by vinodjangid07 */
     .input-wrapper {
       width: fit-content;
       height: 45px;
@@ -400,7 +413,7 @@
         transform: scale3d(1, 1, 1);
       }
     }
-    
+
     .shorten-btn:active {
       transform: scale(0.9);
     }
