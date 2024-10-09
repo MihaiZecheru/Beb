@@ -92,7 +92,7 @@
       let id = localStorage.getItem('user_id');
 
       if (!id) {
-        window.location.href = '/login';
+        window.location.href = '/login?url=' + login;
         throw new Error('User not logged in');
       }
 
