@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap" rel="stylesheet">
 </head>
 <body>
-
   <style>
     * {
       font-family: Comfortaa;
@@ -44,7 +43,7 @@
           </div>
         </div>
       </label>
-    </div>   
+    </div>
   </div>
 
   <script>
@@ -76,7 +75,14 @@
             alert("Invalid username or password");
           } else {
             SetUserID(data.user_id);
-            window.location.href = `/dashboard/${data.user_id}`;
+            const query_params  = new URLSearchParams(window.location.search);
+            const url_param = query_params.get('url');
+            const alias_param = query_params.get('alias');
+            if (url_param && alias_param) {
+              window.location.href = `/?url=${url_param}&alias=${alias_param}`;
+            } else {
+              window.location.href = `/dashboard/${data.user_id}`;
+            }
           }
         }).catch((err) => {
           console.error(err);
@@ -115,7 +121,7 @@
   </script>
 
   <style>
-    /* From Uiverse.io by andrew-demchenk0 */ 
+    /* From Uiverse.io by andrew-demchenk0 */
     .wrapper {
       --input-focus: #2d8cf0;
       --font-color: #323232;
@@ -214,7 +220,7 @@
       text-decoration: underline;
     }
 
-    /* card */ 
+    /* card */
 
     .flip-card__inner {
       width: 300px;
@@ -328,4 +334,4 @@
   </style>
 
 </body>
-</html>
+</html>  
