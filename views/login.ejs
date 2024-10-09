@@ -111,7 +111,14 @@
             alert(`Registration failed - email address already in use`);
           } else {
             SetUserID(data.user_id);
-            window.location.href = `/dashboard/${data.user_id}`;
+            const query_params  = new URLSearchParams(window.location.search);
+            const url_param = query_params.get('url');
+            const alias_param = query_params.get('alias');
+            if (url_param && alias_param) {
+              window.location.href = `/?url=${url_param}&alias=${alias_param}`;
+            } else {
+              window.location.href = `/dashboard/${data.user_id}`;
+            }
           }
         }).catch((err) => {
           console.error(err);
